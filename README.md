@@ -6,7 +6,7 @@ Using the OpenGL vector map [VTM](https://github.com/mapsforge/vtm) with an Ecli
 
 ## How to get it running in an Eclipse IDE
 
-This is tested with Eclipse Neon.3 (4.6.3)
+This is tested with Eclipse Neon.3 (4.6.3) for Committers
 
 * First clone [VTM repo](https://github.com/mapsforge/vtm) and use the folder name **vtm-parent**
 
