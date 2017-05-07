@@ -13,9 +13,9 @@ This is tested with Eclipse Neon.3 (4.6.3)
 * Import only these projects from the VTM repo 
   
   vtm  
-  vtm-themes  
-  vtm-gdx  
   vtm-desktop  
+  vtm-gdx  
+  vtm-themes  
 
 * Second clone [this repo](https://github.com/wolfgang-ch/vtm-with-rcp) into the same parent folder as the VTM repo
 
