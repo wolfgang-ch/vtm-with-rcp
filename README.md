@@ -1,7 +1,6 @@
 # VTM with Eclipse RCP
-Using VTM <https://github.com/mapsforge/vtm> with an Eclipse RCP application
 
-
+Using the OpenGL vector map [VTM](https://github.com/mapsforge/vtm) with an Eclipse RCP application
 
 ## To get it Running in an Eclipse IDE
 
@@ -26,4 +25,3 @@ This is tested with Eclipse Neon.3 (4.6.3)
 
   org.eclipse.equinox.ds  
   org.eclipse.equinox.event
-
