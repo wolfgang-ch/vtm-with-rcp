@@ -1,0 +1,10 @@
+bin/
+build/
+libs/
+
+.settings/
+
+VTM_RCP_Externals/.classpath
+
+.egradle/
+.gradle/
