@@ -21,7 +21,8 @@ This is tested with Eclipse Neon.3 (4.6.3) for Committers
 
 * Import all Eclipse projects from this repo  
 
-* Build VTM\_RCP\_App with gradle by using EGradle <https://github.com/de-jcup/egradle> with [``Import gradle root project with all subprojects``](https://github.com/wolfgang-ch/vtm-with-rcp/raw/master/html-resources/vtm-rcp-import-03.png)
+* Build VTM\_RCP\_App with gradle by using EGradle <https://github.com/de-jcup/egradle> with [``Import gradle root project with all subprojects``](https://github.com/wolfgang-ch/vtm-with-rcp/raw/master/html-resources/vtm-rcp-import-03.png)  
+  Uncheck *Detect and configure project natures* in the import project dialog
 
 * When running the app you also must select these plugins and their required plugins
 
