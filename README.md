@@ -4,11 +4,11 @@ Using the OpenGL vector map [VTM](https://github.com/mapsforge/vtm) with an Ecli
 
 ![VTM](https://github.com/wolfgang-ch/vtm-with-rcp/raw/master/html-resources/vtm-with-rcp.png)
 
-## To get it Running in an Eclipse IDE
+## How to get it running in an Eclipse IDE
 
 This is tested with Eclipse Neon.3 (4.6.3)
 
-* First clone VTM repo <https://github.com/mapsforge/vtm> and use the folder name **vtm-parent**
+* First clone [VTM repo](https://github.com/mapsforge/vtm) and use the folder name **vtm-parent**
 
 * Import only these projects from the VTM repo 
   
@@ -17,11 +17,11 @@ This is tested with Eclipse Neon.3 (4.6.3)
   vtm-gdx  
   vtm-desktop  
 
-* Clone this repo <https://github.com/wolfgang-ch/vtm-with-rcp> in the same parent folder as the VTM repo
+* Second clone [this repo](https://github.com/wolfgang-ch/vtm-with-rcp) into the same parent folder as the VTM repo
 
 * Import all Eclipse projects from this repo  
 
-* Build VTM\_RCP\_App with gradle by using EGradle <https://github.com/de-jcup/egradle>
+* Build VTM\_RCP\_App with gradle by using EGradle <https://github.com/de-jcup/egradle> with [``Import gradle root project with all subprojects``](https://github.com/wolfgang-ch/vtm-with-rcp/raw/master/html-resources/vtm-rcp-import-03.png)
 
 * When running the app you also must select these plugins and their required plugins
 
