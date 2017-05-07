@@ -2,6 +2,8 @@
 
 Using the OpenGL vector map [VTM](https://github.com/mapsforge/vtm) with an Eclipse RCP application
 
+![VTM](https://github.com/wolfgang-ch/vtm-with-rcp/raw/master/html-resources/vtm-with-rcp.png)
+
 ## To get it Running in an Eclipse IDE
 
 This is tested with Eclipse Neon.3 (4.6.3)
