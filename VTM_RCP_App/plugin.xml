@@ -32,12 +32,9 @@
       <perspectiveExtension
             targetID="*">
          <view
-               closeable="false"
                id="VTM_RCP_App.view"
-               minimized="false"
                relationship="left"
-               relative="org.eclipse.ui.editorss"
-               standalone="true">
+               relative="org.eclipse.ui.editorss">
          </view>
       </perspectiveExtension>
    </extension>
