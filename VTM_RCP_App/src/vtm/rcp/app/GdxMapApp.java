@@ -1,24 +1,8 @@
-/*
- * Copyright 2013 Hannes Janetzek
- * Copyright 2016 devemux86
- *
- * This file is part of the OpenScienceMap project (http://www.opensciencemap.org).
- *
- * This program is free software: you can redistribute it and/or modify it under the
- * terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with
- * this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package vtm.rcp.app;
 
 import java.awt.Canvas;
 
+import org.lwjgl.opengl.Display;
 import org.oscim.awt.AwtGraphics;
 import org.oscim.backend.GLAdapter;
 import org.oscim.gdx.GdxAssets;
@@ -37,6 +21,24 @@ public class GdxMapApp extends GdxMap {
 
 	public static final Logger log = LoggerFactory.getLogger(GdxMapApp.class);
 
+	LwjglApplication _lwjglApp;
+
+	protected static LwjglApplicationConfiguration getConfig(String title) {
+
+		LwjglApplicationConfiguration.disableAudio = true;
+		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+
+		cfg.title = title != null ? title : "vtm-gdx";
+		cfg.width = 1200; // 800;
+		cfg.height = 1000; // 600;
+		cfg.stencil = 8;
+		cfg.samples = 2;
+		cfg.foregroundFPS = 30;
+		cfg.backgroundFPS = 10;
+
+		return cfg;
+	}
+
 	public static void init() {
 
 		// load native library
@@ -51,11 +53,23 @@ public class GdxMapApp extends GdxMap {
 		GLAdapter.GDX_DESKTOP_QUIRKS = true;
 	}
 
-	public void run(Canvas canvas) {
+	void close() {
+		
+// !!! both methods will also close the RCP app !!!		
 
-		init();
+//		_lwjglApp.stop();
+//
+//		Display.destroy();
+	}
 
-		new LwjglApplication(new GdxMapApp(), getConfig(null), canvas);
+	@Override
+	public void createLayers() {
+
+		TileSource tileSource = new OSciMap4TileSource();
+
+		initDefaultLayers(tileSource, false, true, true);
+
+		mMap.setMapPosition(0, 0, 1 << 2);
 	}
 
 	@Override
@@ -79,29 +93,10 @@ public class GdxMapApp extends GdxMap {
 		super.resize(w, h);
 	}
 
-	protected static LwjglApplicationConfiguration getConfig(String title) {
+	public void run(Canvas canvas) {
 
-		LwjglApplicationConfiguration.disableAudio = true;
-		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+		init();
 
-		cfg.title = title != null ? title : "vtm-gdx";
-		cfg.width = 1200; // 800;
-		cfg.height = 1000; // 600;
-		cfg.stencil = 8;
-		cfg.samples = 2;
-		cfg.foregroundFPS = 30;
-		cfg.backgroundFPS = 10;
-
-		return cfg;
-	}
-
-	@Override
-	public void createLayers() {
-
-		TileSource tileSource = new OSciMap4TileSource();
-
-		initDefaultLayers(tileSource, false, true, true);
-
-		mMap.setMapPosition(0, 0, 1 << 2);
+		_lwjglApp = new LwjglApplication(new GdxMapApp(), getConfig(null), canvas);
 	}
 }
