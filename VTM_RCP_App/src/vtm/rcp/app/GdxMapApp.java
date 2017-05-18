@@ -58,14 +58,35 @@ public class GdxMapApp extends GdxMap {
 		new LwjglApplication(new GdxMapApp(), getConfig(null), canvas);
 	}
 
+	@Override
+	public void resize(final int w, final int h) {
+
+		if (h < 1) {
+
+			// Fix exception
+			//
+			// Exception in thread "LWJGL Application"
+			// java.lang.IllegalArgumentException: top == bottom
+			// at org.oscim.renderer.GLMatrix.frustumM(GLMatrix.java:331)
+			// at
+			// org.oscim.map.ViewController.setScreenSize(ViewController.java:50)
+			// at org.oscim.gdx.GdxMap.resize(GdxMap.java:122)
+			// at net.tourbook.map.vtm.VtmMap.resize(VtmMap.java:176)
+
+			return;
+		}
+
+		super.resize(w, h);
+	}
+
 	protected static LwjglApplicationConfiguration getConfig(String title) {
 
 		LwjglApplicationConfiguration.disableAudio = true;
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 
 		cfg.title = title != null ? title : "vtm-gdx";
-		cfg.width = 1200; //800;
-		cfg.height = 1000; //600;
+		cfg.width = 1200; // 800;
+		cfg.height = 1000; // 600;
 		cfg.stencil = 8;
 		cfg.samples = 2;
 		cfg.foregroundFPS = 30;
