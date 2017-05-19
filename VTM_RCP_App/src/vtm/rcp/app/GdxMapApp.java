@@ -19,9 +19,9 @@ import com.badlogic.gdx.utils.SharedLibraryLoader;
 
 public class GdxMapApp extends GdxMap {
 
-	public static final Logger log = LoggerFactory.getLogger(GdxMapApp.class);
+	public static final Logger	log	= LoggerFactory.getLogger(GdxMapApp.class);
 
-	LwjglApplication _lwjglApp;
+	LwjglApplication			_lwjglApp;
 
 	protected static LwjglApplicationConfiguration getConfig(String title) {
 
@@ -53,9 +53,9 @@ public class GdxMapApp extends GdxMap {
 		GLAdapter.GDX_DESKTOP_QUIRKS = true;
 	}
 
-	void close() {
-		
-// !!! both methods will also close the RCP app !!!		
+	void closeMap() {
+
+// !!! both methods will also close the RCP app, therefore it is disabled !!!		
 
 //		_lwjglApp.stop();
 //
@@ -82,8 +82,7 @@ public class GdxMapApp extends GdxMap {
 			// Exception in thread "LWJGL Application"
 			// java.lang.IllegalArgumentException: top == bottom
 			// at org.oscim.renderer.GLMatrix.frustumM(GLMatrix.java:331)
-			// at
-			// org.oscim.map.ViewController.setScreenSize(ViewController.java:50)
+			// at org.oscim.map.ViewController.setScreenSize(ViewController.java:50)
 			// at org.oscim.gdx.GdxMap.resize(GdxMap.java:122)
 			// at net.tourbook.map.vtm.VtmMap.resize(VtmMap.java:176)
 
