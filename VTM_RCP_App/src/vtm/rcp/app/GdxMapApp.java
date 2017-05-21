@@ -1,14 +1,17 @@
 package vtm.rcp.app;
 
 import java.awt.Canvas;
+import java.io.File;
 
-import org.lwjgl.opengl.Display;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.oscim.awt.AwtGraphics;
 import org.oscim.backend.GLAdapter;
 import org.oscim.gdx.GdxAssets;
 import org.oscim.gdx.GdxMap;
 import org.oscim.gdx.LwjglGL20;
-import org.oscim.tiling.TileSource;
+import org.oscim.tiling.source.OkHttpEngine;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.utils.SharedLibraryLoader;
+
+import okhttp3.Cache;
 
 public class GdxMapApp extends GdxMap {
 
@@ -29,12 +34,14 @@ public class GdxMapApp extends GdxMap {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 
 		cfg.title = title != null ? title : "vtm-gdx";
-		cfg.width = 1200; // 800;
-		cfg.height = 1000; // 600;
+		cfg.width = 1200; 
+		cfg.height = 1000; 
 		cfg.stencil = 8;
 		cfg.samples = 2;
 		cfg.foregroundFPS = 30;
 		cfg.backgroundFPS = 10;
+
+		cfg.forceExit = false;
 
 		return cfg;
 	}
@@ -55,21 +62,44 @@ public class GdxMapApp extends GdxMap {
 
 	void closeMap() {
 
-// !!! both methods will also close the RCP app, therefore it is disabled !!!		
+		_lwjglApp.stop();
+	}
 
-//		_lwjglApp.stop();
-//
-//		Display.destroy();
+	private String getCacheDir() {
+
+		final String workingDirectory = Platform.getInstanceLocation().getURL().getPath();
+
+		final IPath tileCachePath = new Path(workingDirectory).append("vtm-tile-cache");
+
+		if (tileCachePath.toFile().exists() == false) {
+			tileCachePath.toFile().mkdirs();
+		}
+
+		return tileCachePath.toOSString();
 	}
 
 	@Override
 	public void createLayers() {
 
-		TileSource tileSource = new OSciMap4TileSource();
+// ORIGINAL
+
+//		TileSource tileSource = new OSciMap4TileSource();
+
+///////////////////////////////////////////////////////////////////////////////////////////////		
+
+		final Cache cache = new Cache(new File(getCacheDir()), Integer.MAX_VALUE);
+
+		final OkHttpEngine.OkHttpFactory httpFactory = new OkHttpEngine.OkHttpFactory(cache);
+
+		final OSciMap4TileSource tileSource = OSciMap4TileSource//
+				.builder()
+				.httpFactory(httpFactory)
+				.build();
 
 		initDefaultLayers(tileSource, false, true, true);
 
 		mMap.setMapPosition(0, 0, 1 << 2);
+
 	}
 
 	@Override
