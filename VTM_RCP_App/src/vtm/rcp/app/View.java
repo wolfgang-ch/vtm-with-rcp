@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Frame;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.widgets.Composite;
@@ -15,6 +16,7 @@ public class View extends ViewPart {
 
 	public static final String	ID	= "VTM_RCP_App.view";
 
+	private static final IDialogSettings	_state	= Activator.getDefault().getDialogSettingsSection(ID);
 
 	private GdxMapApp			_gdxMapApp;
 
@@ -79,7 +81,7 @@ public class View extends ViewPart {
 		awtCanvas.setFocusable(true);
 		awtCanvas.requestFocus();
 
-		_gdxMapApp = new GdxMapApp();
+		_gdxMapApp = new GdxMapApp(_state);
 		_gdxMapApp.run(awtCanvas);
 	}
 

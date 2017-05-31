@@ -6,8 +6,10 @@ import java.io.File;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.oscim.awt.AwtGraphics;
 import org.oscim.backend.GLAdapter;
+import org.oscim.core.MapPosition;
 import org.oscim.gdx.GdxAssets;
 import org.oscim.gdx.GdxMap;
 import org.oscim.gdx.LwjglGL20;
@@ -24,9 +26,22 @@ import okhttp3.Cache;
 
 public class GdxMapApp extends GdxMap {
 
-	public static final Logger	log	= LoggerFactory.getLogger(GdxMapApp.class);
+	private static final String	STATE_MAP_POS_X				= "STATE_MAP_POS_X";						//$NON-NLS-1$
+	private static final String	STATE_MAP_POS_Y				= "STATE_MAP_POS_Y";						//$NON-NLS-1$
+	private static final String	STATE_MAP_POS_ZOOM_LEVEL	= "STATE_MAP_POS_ZOOM_LEVEL";				//$NON-NLS-1$
+	private static final String	STATE_MAP_POS_BEARING		= "STATE_MAP_POS_BEARING";					//$NON-NLS-1$
+	private static final String	STATE_MAP_POS_SCALE			= "STATE_MAP_POS_SCALE";					//$NON-NLS-1$
+	private static final String	STATE_MAP_POS_TILT			= "STATE_MAP_POS_TILT";						//$NON-NLS-1$
+
+	public static final Logger	log							= LoggerFactory.getLogger(GdxMapApp.class);
+	private IDialogSettings		_state;
 
 	LwjglApplication			_lwjglApp;
+
+	public GdxMapApp(IDialogSettings state) {
+
+		_state = state;
+	}
 
 	protected static LwjglApplicationConfiguration getConfig(String title) {
 
@@ -34,8 +49,8 @@ public class GdxMapApp extends GdxMap {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 
 		cfg.title = title != null ? title : "vtm-gdx";
-		cfg.width = 1200; 
-		cfg.height = 1000; 
+		cfg.width = 1200;
+		cfg.height = 1000;
 		cfg.stencil = 8;
 		cfg.samples = 2;
 		cfg.foregroundFPS = 30;
@@ -60,9 +75,45 @@ public class GdxMapApp extends GdxMap {
 		GLAdapter.GDX_DESKTOP_QUIRKS = true;
 	}
 
+	@Override
+	public void dispose() {
+
+		saveState();
+
+		super.dispose();
+	}
+
+	private void saveState() {
+
+		final MapPosition mapPosition = mMap.getMapPosition();
+
+		_state.put(STATE_MAP_POS_X, mapPosition.x);
+		_state.put(STATE_MAP_POS_Y, mapPosition.y);
+		_state.put(STATE_MAP_POS_BEARING, mapPosition.bearing);
+		_state.put(STATE_MAP_POS_SCALE, mapPosition.scale);
+		_state.put(STATE_MAP_POS_TILT, mapPosition.tilt);
+		_state.put(STATE_MAP_POS_ZOOM_LEVEL, mapPosition.zoomLevel);
+	}
+
 	void closeMap() {
 
 		_lwjglApp.stop();
+	}
+
+	private void restoreState() {
+
+		final MapPosition mapPosition = new MapPosition();
+
+		mapPosition.x = Util.getStateDouble(_state, STATE_MAP_POS_X, 0.5);
+		mapPosition.y = Util.getStateDouble(_state, STATE_MAP_POS_Y, 0.5);
+
+		mapPosition.bearing = Util.getStateFloat(_state, STATE_MAP_POS_BEARING, 0);
+		mapPosition.tilt = Util.getStateFloat(_state, STATE_MAP_POS_TILT, 0);
+
+		mapPosition.scale = Util.getStateDouble(_state, STATE_MAP_POS_SCALE, 1);
+		mapPosition.zoomLevel = Util.getStateInt(_state, STATE_MAP_POS_ZOOM_LEVEL, 1);
+
+		mMap.setMapPosition(mapPosition);
 	}
 
 	private String getCacheDir() {
@@ -81,12 +132,6 @@ public class GdxMapApp extends GdxMap {
 	@Override
 	public void createLayers() {
 
-// ORIGINAL
-
-//		TileSource tileSource = new OSciMap4TileSource();
-
-///////////////////////////////////////////////////////////////////////////////////////////////		
-
 		final Cache cache = new Cache(new File(getCacheDir()), Integer.MAX_VALUE);
 
 		final OkHttpEngine.OkHttpFactory httpFactory = new OkHttpEngine.OkHttpFactory(cache);
@@ -98,8 +143,7 @@ public class GdxMapApp extends GdxMap {
 
 		initDefaultLayers(tileSource, false, true, true);
 
-		mMap.setMapPosition(0, 0, 1 << 2);
-
+		restoreState();
 	}
 
 	@Override
@@ -126,6 +170,6 @@ public class GdxMapApp extends GdxMap {
 
 		init();
 
-		_lwjglApp = new LwjglApplication(new GdxMapApp(), getConfig(null), canvas);
+		_lwjglApp = new LwjglApplication(new GdxMapApp(_state), getConfig(null), canvas);
 	}
 }
