@@ -2,6 +2,7 @@ package vtm.rcp.app;
 
 import java.awt.Canvas;
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -13,7 +14,13 @@ import org.oscim.core.MapPosition;
 import org.oscim.gdx.GdxAssets;
 import org.oscim.gdx.GdxMap;
 import org.oscim.gdx.LwjglGL20;
+import org.oscim.layers.tile.buildings.BuildingLayer;
+import org.oscim.layers.tile.vector.VectorTileLayer;
+import org.oscim.layers.tile.vector.labeling.LabelLayer;
+import org.oscim.map.Layers;
+import org.oscim.theme.VtmThemes;
 import org.oscim.tiling.source.OkHttpEngine;
+import org.oscim.tiling.source.OkHttpEngine.OkHttpFactory;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,17 +33,25 @@ import okhttp3.Cache;
 
 public class GdxMapApp extends GdxMap {
 
-	private static final String	STATE_MAP_POS_X				= "STATE_MAP_POS_X";						//$NON-NLS-1$
-	private static final String	STATE_MAP_POS_Y				= "STATE_MAP_POS_Y";						//$NON-NLS-1$
-	private static final String	STATE_MAP_POS_ZOOM_LEVEL	= "STATE_MAP_POS_ZOOM_LEVEL";				//$NON-NLS-1$
-	private static final String	STATE_MAP_POS_BEARING		= "STATE_MAP_POS_BEARING";					//$NON-NLS-1$
-	private static final String	STATE_MAP_POS_SCALE			= "STATE_MAP_POS_SCALE";					//$NON-NLS-1$
-	private static final String	STATE_MAP_POS_TILT			= "STATE_MAP_POS_TILT";						//$NON-NLS-1$
+	private static final String				STATE_MAP_POS_X				= "STATE_MAP_POS_X";						//$NON-NLS-1$
+	private static final String				STATE_MAP_POS_Y				= "STATE_MAP_POS_Y";						//$NON-NLS-1$
+	private static final String				STATE_MAP_POS_ZOOM_LEVEL	= "STATE_MAP_POS_ZOOM_LEVEL";				//$NON-NLS-1$
+	private static final String				STATE_MAP_POS_BEARING		= "STATE_MAP_POS_BEARING";					//$NON-NLS-1$
+	private static final String				STATE_MAP_POS_SCALE			= "STATE_MAP_POS_SCALE";					//$NON-NLS-1$
+	private static final String				STATE_MAP_POS_TILT			= "STATE_MAP_POS_TILT";						//$NON-NLS-1$
 
-	public static final Logger	log							= LoggerFactory.getLogger(GdxMapApp.class);
-	private IDialogSettings		_state;
+	private static final TileSourceProvider	TILE_PROVIDER				= TileSourceProvider.CustomTileProvider;
 
-	LwjglApplication			_lwjglApp;
+	public static final Logger				log							= LoggerFactory.getLogger(GdxMapApp.class);
+	private IDialogSettings					_state;
+
+	LwjglApplication						_lwjglApp;
+
+	private enum TileSourceProvider {
+
+		OpenScienceMap, //
+		CustomTileProvider, //
+	}
 
 	public GdxMapApp(IDialogSettings state) {
 
@@ -93,6 +108,8 @@ public class GdxMapApp extends GdxMap {
 		_state.put(STATE_MAP_POS_SCALE, mapPosition.scale);
 		_state.put(STATE_MAP_POS_TILT, mapPosition.tilt);
 		_state.put(STATE_MAP_POS_ZOOM_LEVEL, mapPosition.zoomLevel);
+
+		log.debug("Map position: " + mapPosition.toString());
 	}
 
 	void closeMap() {
@@ -133,8 +150,42 @@ public class GdxMapApp extends GdxMap {
 	public void createLayers() {
 
 		final Cache cache = new Cache(new File(getCacheDir()), Integer.MAX_VALUE);
+		final OkHttpEngine.OkHttpFactory httpFactory = new OkHttpEngine.OkHttpFactory(cache)
+				.connectTimeout(30, TimeUnit.SECONDS)
+				.readTimeout(30, TimeUnit.SECONDS)
+				.writeTimeout(30, TimeUnit.SECONDS);
 
-		final OkHttpEngine.OkHttpFactory httpFactory = new OkHttpEngine.OkHttpFactory(cache);
+		switch (TILE_PROVIDER) {
+		case CustomTileProvider:
+			createTileSource_Custom(httpFactory);
+			break;
+
+		default:
+			createTileSource_OSciMap(httpFactory);
+			break;
+		}
+
+		restoreState();
+	}
+
+	private void createTileSource_Custom(OkHttpFactory httpFactory) {
+
+		final CustomTileSource tileSource = CustomTileSource //
+				.builder()
+				.httpFactory(httpFactory)
+				.build();
+
+		VectorTileLayer mapLayer = mMap.setBaseMap(tileSource);
+		
+		Layers layers = mMap.layers();
+
+		layers.add(new BuildingLayer(mMap, mapLayer));
+		layers.add(new LabelLayer(mMap, mapLayer));
+
+		mMap.setTheme(VtmThemes.MAPZEN);
+	}
+
+	private void createTileSource_OSciMap(final OkHttpFactory httpFactory) {
 
 		final OSciMap4TileSource tileSource = OSciMap4TileSource//
 				.builder()
@@ -142,8 +193,6 @@ public class GdxMapApp extends GdxMap {
 				.build();
 
 		initDefaultLayers(tileSource, false, true, true);
-
-		restoreState();
 	}
 
 	@Override
