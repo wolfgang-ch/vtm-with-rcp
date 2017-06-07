@@ -18,9 +18,10 @@ import org.oscim.layers.tile.buildings.BuildingLayer;
 import org.oscim.layers.tile.vector.VectorTileLayer;
 import org.oscim.layers.tile.vector.labeling.LabelLayer;
 import org.oscim.map.Layers;
+import org.oscim.theme.ThemeFile;
 import org.oscim.theme.VtmThemes;
 import org.oscim.tiling.source.OkHttpEngine;
-import org.oscim.tiling.source.OkHttpEngine.OkHttpFactory;
+import org.oscim.tiling.source.UrlTileSource;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,19 +34,17 @@ import okhttp3.Cache;
 
 public class GdxMapApp extends GdxMap {
 
-	private static final String				STATE_MAP_POS_X				= "STATE_MAP_POS_X";						//$NON-NLS-1$
-	private static final String				STATE_MAP_POS_Y				= "STATE_MAP_POS_Y";						//$NON-NLS-1$
-	private static final String				STATE_MAP_POS_ZOOM_LEVEL	= "STATE_MAP_POS_ZOOM_LEVEL";				//$NON-NLS-1$
-	private static final String				STATE_MAP_POS_BEARING		= "STATE_MAP_POS_BEARING";					//$NON-NLS-1$
-	private static final String				STATE_MAP_POS_SCALE			= "STATE_MAP_POS_SCALE";					//$NON-NLS-1$
-	private static final String				STATE_MAP_POS_TILT			= "STATE_MAP_POS_TILT";						//$NON-NLS-1$
+	private static final String	STATE_MAP_POS_X				= "STATE_MAP_POS_X";						//$NON-NLS-1$
+	private static final String	STATE_MAP_POS_Y				= "STATE_MAP_POS_Y";						//$NON-NLS-1$
+	private static final String	STATE_MAP_POS_ZOOM_LEVEL	= "STATE_MAP_POS_ZOOM_LEVEL";				//$NON-NLS-1$
+	private static final String	STATE_MAP_POS_BEARING		= "STATE_MAP_POS_BEARING";					//$NON-NLS-1$
+	private static final String	STATE_MAP_POS_SCALE			= "STATE_MAP_POS_SCALE";					//$NON-NLS-1$
+	private static final String	STATE_MAP_POS_TILT			= "STATE_MAP_POS_TILT";						//$NON-NLS-1$
 
-	private static final TileSourceProvider	TILE_PROVIDER				= TileSourceProvider.CustomTileProvider;
+	public static final Logger	log							= LoggerFactory.getLogger(GdxMapApp.class);
+	private IDialogSettings		_state;
 
-	public static final Logger				log							= LoggerFactory.getLogger(GdxMapApp.class);
-	private IDialogSettings					_state;
-
-	LwjglApplication						_lwjglApp;
+	LwjglApplication			_lwjglApp;
 
 	private enum TileSourceProvider {
 
@@ -133,66 +132,52 @@ public class GdxMapApp extends GdxMap {
 		mMap.setMapPosition(mapPosition);
 	}
 
-	private String getCacheDir() {
-
-		final String workingDirectory = Platform.getInstanceLocation().getURL().getPath();
-
-		final IPath tileCachePath = new Path(workingDirectory).append("vtm-tile-cache");
-
-		if (tileCachePath.toFile().exists() == false) {
-			tileCachePath.toFile().mkdirs();
-		}
-
-		return tileCachePath.toOSString();
-	}
-
 	@Override
 	public void createLayers() {
 
-		final Cache cache = new Cache(new File(getCacheDir()), Integer.MAX_VALUE);
+		final Cache cache = new Cache(new File(Util.getCacheDir()), Integer.MAX_VALUE);
+
 		final OkHttpEngine.OkHttpFactory httpFactory = new OkHttpEngine.OkHttpFactory(cache)
 				.connectTimeout(30, TimeUnit.SECONDS)
 				.readTimeout(30, TimeUnit.SECONDS)
 				.writeTimeout(30, TimeUnit.SECONDS);
 
-		switch (TILE_PROVIDER) {
+		UrlTileSource tileSource;
+		ThemeFile mapTheme;
+
+		switch (TileSourceProvider.CustomTileProvider) {
 		case CustomTileProvider:
-			createTileSource_Custom(httpFactory);
+
+			mapTheme = VtmThemes.MAPZEN;
+
+			tileSource = CustomTileSource //
+					.builder()
+					.httpFactory(httpFactory)
+					.build();
 			break;
 
 		default:
-			createTileSource_OSciMap(httpFactory);
+
+			mapTheme = VtmThemes.DEFAULT;
+
+			tileSource = OSciMap4TileSource//
+					.builder()
+					.httpFactory(httpFactory)
+					.build();
 			break;
 		}
 
-		restoreState();
-	}
-
-	private void createTileSource_Custom(OkHttpFactory httpFactory) {
-
-		final CustomTileSource tileSource = CustomTileSource //
-				.builder()
-				.httpFactory(httpFactory)
-				.build();
-
 		VectorTileLayer mapLayer = mMap.setBaseMap(tileSource);
-		
+
+		mMap.setTheme(mapTheme);
+		mMap.viewport().setMaxTilt(88);
+
 		Layers layers = mMap.layers();
 
 		layers.add(new BuildingLayer(mMap, mapLayer));
 		layers.add(new LabelLayer(mMap, mapLayer));
 
-		mMap.setTheme(VtmThemes.MAPZEN);
-	}
-
-	private void createTileSource_OSciMap(final OkHttpFactory httpFactory) {
-
-		final OSciMap4TileSource tileSource = OSciMap4TileSource//
-				.builder()
-				.httpFactory(httpFactory)
-				.build();
-
-		initDefaultLayers(tileSource, false, true, true);
+		restoreState();
 	}
 
 	@Override

@@ -18,18 +18,21 @@ public class CustomTileSource extends UrlTileSource {
 
 		@Override
 		public CustomTileSource build() {
-			
 			return new CustomTileSource(this);
 		}
 	}
 
 	private CustomTileSource(final Builder<?> builder) {
+
 		super(builder);
+
+		final OkHttpTileCache cache = new OkHttpTileCache(this);
+		this.setCache(cache);
 	}
 
 	@SuppressWarnings("rawtypes")
 	public static Builder<?> builder() {
-		
+
 		return new Builder();
 	}
 

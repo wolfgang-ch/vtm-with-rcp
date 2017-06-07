@@ -1,8 +1,24 @@
 package vtm.rcp.app;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
 public class Util {
+
+	public static String getCacheDir() {
+
+		final String workingDirectory = Platform.getInstanceLocation().getURL().getPath();
+
+		final IPath tileCachePath = new Path(workingDirectory).append("vtm-tile-cache");
+
+		if (tileCachePath.toFile().exists() == false) {
+			tileCachePath.toFile().mkdirs();
+		}
+
+		return tileCachePath.toOSString();
+	}
 
 	/**
 	 * @param state
