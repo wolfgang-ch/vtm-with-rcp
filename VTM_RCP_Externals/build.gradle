@@ -182,6 +182,9 @@ def createBundleClassPath() {
 	// add libs/ which contains the vtm natives
     list += 'libs/'
 
+	// add log4j.properties
+    list += 'resources/'
+
     return list.join(',')
 }
 

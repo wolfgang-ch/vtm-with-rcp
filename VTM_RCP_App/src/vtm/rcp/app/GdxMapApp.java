@@ -4,9 +4,6 @@ import java.awt.Canvas;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.oscim.awt.AwtGraphics;
 import org.oscim.backend.GLAdapter;
@@ -22,6 +19,7 @@ import org.oscim.theme.ThemeFile;
 import org.oscim.theme.VtmThemes;
 import org.oscim.tiling.source.OkHttpEngine;
 import org.oscim.tiling.source.UrlTileSource;
+import org.oscim.tiling.source.mvt.MapboxTileSource;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +29,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.utils.SharedLibraryLoader;
 
 import okhttp3.Cache;
+import okhttp3.OkHttpClient;
 
 public class GdxMapApp extends GdxMap {
 
@@ -48,8 +47,9 @@ public class GdxMapApp extends GdxMap {
 
 	private enum TileSourceProvider {
 
-		OpenScienceMap, //
 		CustomTileProvider, //
+		OpenScienceMap, //
+		Mapzen, //
 	}
 
 	public GdxMapApp(IDialogSettings state) {
@@ -137,21 +137,36 @@ public class GdxMapApp extends GdxMap {
 
 		final Cache cache = new Cache(new File(Util.getCacheDir()), Integer.MAX_VALUE);
 
-		final OkHttpEngine.OkHttpFactory httpFactory = new OkHttpEngine.OkHttpFactory(cache)
+		OkHttpClient.Builder builder = new OkHttpClient.Builder()
+				.cache(cache)
 				.connectTimeout(30, TimeUnit.SECONDS)
 				.readTimeout(30, TimeUnit.SECONDS)
 				.writeTimeout(30, TimeUnit.SECONDS);
+
+		OkHttpEngine.OkHttpFactory httpFactory = new OkHttpEngine.OkHttpFactory(builder);
 
 		UrlTileSource tileSource;
 		ThemeFile mapTheme;
 
 		switch (TileSourceProvider.CustomTileProvider) {
+
 		case CustomTileProvider:
 
 			mapTheme = VtmThemes.MAPZEN;
 
 			tileSource = CustomTileSource //
 					.builder()
+					.httpFactory(httpFactory)
+					.build();
+			break;
+
+		case Mapzen:
+
+			mapTheme = VtmThemes.MAPZEN;
+
+			tileSource = MapboxTileSource
+					.builder()
+//					.apiKey("mapzen-xxxxxxx") // Put a proper API key
 					.httpFactory(httpFactory)
 					.build();
 			break;
