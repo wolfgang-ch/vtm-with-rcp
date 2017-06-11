@@ -163,10 +163,13 @@ public class GdxMapApp extends GdxMap {
 		case Mapzen:
 
 			mapTheme = VtmThemes.MAPZEN;
+			
+			// Mapzen requires an API key that the tiles can be loaded
+			String apiKey = System.getProperty("MapzenApiKey", "mapzen-xxxxxxx");
 
 			tileSource = MapboxTileSource
 					.builder()
-//					.apiKey("mapzen-xxxxxxx") // Put a proper API key
+					.apiKey(apiKey) // Put a proper API key
 					.httpFactory(httpFactory)
 					.build();
 			break;
