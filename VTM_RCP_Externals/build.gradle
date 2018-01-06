@@ -165,12 +165,16 @@ osgiBndManifest {
 
 def createBundleClassPath() {
 
+	println 'createBundleClassPath'
+
     def list = []
 
 	// use only compile time resources and not runtime resources, this trick excludes :sources 
     configurations.compile.each {
     
     	def name = it.name
+
+		println '\t' + name
     	
     	if(name.equals('linux') || name.equals('osx') || name.equals('windows')){ 
 	    	// skip /natives/ items: linux, osx, windows

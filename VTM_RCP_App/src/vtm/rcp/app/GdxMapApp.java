@@ -19,7 +19,6 @@ import org.oscim.theme.ThemeFile;
 import org.oscim.theme.VtmThemes;
 import org.oscim.tiling.source.OkHttpEngine;
 import org.oscim.tiling.source.UrlTileSource;
-import org.oscim.tiling.source.mvt.MapboxTileSource;
 import org.oscim.tiling.source.oscimap4.OSciMap4TileSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,29 +149,29 @@ public class GdxMapApp extends GdxMap {
 
 		switch (TileSourceProvider.CustomTileProvider) {
 
-		case CustomTileProvider:
+//		case CustomTileProvider:
+//
+//			mapTheme = VtmThemes.MAPZEN;
+//
+//			tileSource = CustomTileSource //
+//					.builder()
+//					.httpFactory(httpFactory)
+//					.build();
+//			break;
 
-			mapTheme = VtmThemes.MAPZEN;
-
-			tileSource = CustomTileSource //
-					.builder()
-					.httpFactory(httpFactory)
-					.build();
-			break;
-
-		case Mapzen:
-
-			mapTheme = VtmThemes.MAPZEN;
-			
-			// Mapzen requires an API key that the tiles can be loaded
-			String apiKey = System.getProperty("MapzenApiKey", "mapzen-xxxxxxx");
-
-			tileSource = MapboxTileSource
-					.builder()
-					.apiKey(apiKey) // Put a proper API key
-					.httpFactory(httpFactory)
-					.build();
-			break;
+//		case Mapzen:
+//
+//			mapTheme = VtmThemes.MAPZEN;
+//			
+//			// Mapzen requires an API key that the tiles can be loaded
+//			String apiKey = System.getProperty("MapzenApiKey", "mapzen-xxxxxxx");
+//
+//			tileSource = MapboxTileSource
+//					.builder()
+//					.apiKey(apiKey) // Put a proper API key
+//					.httpFactory(httpFactory)
+//					.build();
+//			break;
 
 		default:
 
