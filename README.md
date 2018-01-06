@@ -6,7 +6,7 @@ Using the OpenGL vector map [VTM](https://github.com/mapsforge/vtm) with an Ecli
 
 ## How to get it running in an Eclipse IDE
 
-This is tested with Eclipse Neon.3 (4.6.3) for Committers
+This is tested with Eclipse Oxygen.2 (4.7.2)
 
 * First clone [VTM repo](https://github.com/mapsforge/vtm) and use the folder name **vtm-parent**
 
@@ -28,3 +28,29 @@ This is tested with Eclipse Neon.3 (4.6.3) for Committers
 
   org.eclipse.equinox.ds  
   org.eclipse.equinox.event
+
+
+* Some includes in the file \vtm-parent\settings.gradle must be disabled
+
+	rootProject.name = 'vtm-parent'
+	include ':vtm'
+	//include ':vtm-android'
+	//include ':vtm-android-example'
+	//include ':vtm-android-gdx'
+	//include ':vtm-app'
+	include ':vtm-desktop'
+	include ':vtm-extras'
+	include ':vtm-gdx'
+	include ':vtm-http'
+	//include ':vtm-ios'
+	//include ':vtm-ios-example'
+	//include ':vtm-jeo'
+	include ':vtm-json'
+	include ':vtm-jts'
+	//include ':vtm-playground'
+	//include ':vtm-tests'
+	//include ':vtm-theme-comparator'
+	include ':vtm-themes'
+	//include ':vtm-web'
+	//include ':vtm-web-app'
+	//include ':vtm-web-js'
