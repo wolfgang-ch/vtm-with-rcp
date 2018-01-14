@@ -3,6 +3,7 @@ rootProject.name = 'VTM_RCP'
 // rcp projects
 include ':VTM_RCP_App'
 include ':VTM_RCP_Externals'
+include ':VTM_RCP_Externals.windows'
 
 // vtm projects
 include ':vtm'

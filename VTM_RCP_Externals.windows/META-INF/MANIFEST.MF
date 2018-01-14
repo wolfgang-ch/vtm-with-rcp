@@ -5,3 +5,4 @@ Bundle-SymbolicName: VTM_RCP_Externals.windows
 Bundle-Version: 0.1.0.qualifier
 Fragment-Host: VTM_RCP_Externals;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ClassPath: natives/
