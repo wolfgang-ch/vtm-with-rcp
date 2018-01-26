@@ -74,5 +74,17 @@
 			class="vtm.rcp.app.ViewHandler"
 		/>
 	</extension>
+ <extension
+       id="VTM_RCP_ID"
+       point="org.eclipse.core.runtime.products">
+    <product
+          application="VTM_RCP_App.application"
+          name="VTM_RCP_Product">
+       <property
+             name="appName"
+             value="VTM_RCP_Product">
+       </property>
+    </product>
+ </extension>
 
 </plugin>

@@ -25,9 +25,9 @@
          version="0.0.0"/>
 
    <requires>
+      <import plugin="VTM_RCP_Externals"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="VTM_RCP_Externals"/>
    </requires>
 
    <plugin

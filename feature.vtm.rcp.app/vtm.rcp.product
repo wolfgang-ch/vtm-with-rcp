@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product 
-	
-	version			="0.1.0.qualifier" 
-	
-	uid				="vtm.rcp.product" 
-	application		="VTM_RCP_App.application" 
-	useFeatures		="true" 
-	includeLaunchers="true">
+<product name="VTM_RCP_Product" uid="vtm.rcp.product" id="VTM_RCP_App.VTM_RCP_ID" application="VTM_RCP_App.application" version="0.1.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -21,6 +14,15 @@
    <plugins>
       <plugin id="org.eclipse.rcp"/>
    </plugins>
+
+   <features>
+      <feature id="feature.vtm.rcp.externals" version="0.1.0.qualifier"/>
+      <feature id="feature.vtm.rcp.product" version="0.1.0.qualifier"/>
+      <feature id="org.eclipse.emf.ecore"/>
+      <feature id="org.eclipse.rcp"/>
+      <feature id="org.eclipse.emf.common"/>
+      <feature id="org.eclipse.e4.rcp"/>
+   </features>
 
 
 </product>

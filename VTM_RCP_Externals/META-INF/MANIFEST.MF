@@ -10,8 +10,8 @@ Bundle-License: http://www.apache.org/licenses/LICENSE-2.0
 Bundle-ManifestVersion: 2
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-SymbolicName: VTM_RCP_Externals
-Bundle-Vendor: Bundle Vendor
-Bundle-Version: 0.1.0.v20180114-0931
+Bundle-Vendor: MyTourbook
+Bundle-Version: 0.1.0.v20180126-1512
 Export-Package: assets.patterns;version="0.1.0",assets.shaders;version
  ="0.1.0",assets.symbols;version="0.1.0",assets.symbols.accommodation;
  version="0.1.0",assets.symbols.amenity;version="0.1.0",assets.symbols
